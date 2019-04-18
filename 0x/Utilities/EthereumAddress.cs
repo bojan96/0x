@@ -14,6 +14,7 @@ namespace ZeroX.Utilities
         public bool IsChecksumAddress => AddressUtil.Current.IsChecksumAddress(_address);
         public byte[] Bytes => _address.HexToByteArray();
 
+
         public EthereumAddress(string address)
         {
             if (address == null)
@@ -56,6 +57,14 @@ namespace ZeroX.Utilities
             {
                 throw new InvalidCastException($"Can not cast string to EthereumAddress", ex);
             }
+        }
+
+        public static EthereumAddress FromByteArray(byte[] address)
+        {
+            if (address == null)
+                throw new ArgumentNullException(nameof(address));
+
+            return new EthereumAddress(address.ToHex(true));
         }
     }
 }
