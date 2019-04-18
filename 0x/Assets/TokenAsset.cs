@@ -1,4 +1,5 @@
 ﻿using Nethereum.ABI.Encoders;
+using Nethereum.Util;
 using ZeroX.Utilities;
 
 namespace ZeroX.Assets

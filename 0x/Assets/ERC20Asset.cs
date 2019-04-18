@@ -1,5 +1,6 @@
 ﻿using Nethereum.Util;
 using System;
+using System.Linq;
 using ZeroX.Utilities;
 
 namespace ZeroX.Assets
@@ -16,6 +17,9 @@ namespace ZeroX.Assets
         private ERC20Asset(EthereumAddress tokenAddress)
             : base(EncodeAssetData(tokenAddress), tokenAddress) { }
 
+        private ERC20Asset(byte[] assetData)
+            : base(assetData, EthereumAddress.FromByteArray(assetData.Slice(4))) { }
+
         /// <summary>
         /// Creates an ERC20 asset
         /// </summary>
@@ -23,5 +27,16 @@ namespace ZeroX.Assets
         /// <returns></returns>
         public static ERC20Asset Create(EthereumAddress tokenAddress)
             => new ERC20Asset(tokenAddress ?? throw new ArgumentNullException(nameof(tokenAddress)));
+
+        public static ERC20Asset Create(byte[] assetData)
+        {
+            if (assetData == null)
+                throw new ArgumentNullException(nameof(assetData));
+
+            if (assetData.Length != 36 || ! assetData.Slice(0, 4).SequenceEqual(_erc20AssetHeader))
+                throw new ArgumentException("Passed asset data not valid erc20 asset data", nameof(assetData));
+
+            return new ERC20Asset(assetData);
+        }
     }
 }
