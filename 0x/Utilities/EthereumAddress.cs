@@ -7,6 +7,9 @@ namespace ZeroX.Utilities
 {
     public class EthereumAddress
     {
+
+        // TODO: Add docs
+
         private string _address;
         private const string ZeroAddressLiteral = "0x0000000000000000000000000000000000000000";
 
