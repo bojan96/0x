@@ -17,8 +17,8 @@ namespace ZeroX.Orders
         public BigInteger TakerFee { get; set; }
         public BigInteger ExpirationTimeSeconds { get; set; }
         public BigInteger Salt { get; set; }
-        public Asset MakerAssetData { get; set; }
-        public Asset TakerAssetData { get; set; }
+        public Asset MakerAsset { get; set; }
+        public Asset TakerAsset { get; set; }
 
         public byte[] Hash(EthereumAddress exchangeAddress)
         {
@@ -29,7 +29,9 @@ namespace ZeroX.Orders
                 VerifyingContract = exchangeAddress.ToString()
             };
 
-            return EIP712.EIP712.Hash(EIP712Order, domain);
+            var ord = EIP712Order;
+            var res = EIP712.EIP712.Encode(ord, domain);
+            return EIP712.EIP712.Hash(ord, domain);
         }
 
         private OrderInternal EIP712Order
@@ -42,11 +44,12 @@ namespace ZeroX.Orders
                 SenderAddress = SenderAddress.ToString(),
                 MakerAssetAmount = MakerAssetAmount,
                 TakerAssetAmount = TakerAssetAmount,
-                MakerFee = TakerFee,
+                MakerFee = MakerFee,
+                TakerFee = TakerFee,
                 ExpirationTimeSeconds = ExpirationTimeSeconds,
                 Salt = Salt,
-                MakerAssetData = MakerAssetData.AssetData,
-                TakerAssetData = TakerAssetData.AssetData
+                MakerAssetData = MakerAsset.AssetData,
+                TakerAssetData = TakerAsset.AssetData
             }; 
         }
     }

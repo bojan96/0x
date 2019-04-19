@@ -4,6 +4,7 @@ using ZeroX.Utilities;
 
 namespace ZeroX.Orders
 {
+    [StructName("Order")]
     internal class OrderInternal
     {
         [Member("address", 1)]
