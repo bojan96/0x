@@ -9,37 +9,41 @@ namespace Tests.Tests
     public class AssetDataTests
     {
 
-        private static readonly EthereumAddress _testAddress = (EthereumAddress)"0x646934251e9045F41DdF7145Dea5cD63cD45d8Da";
+        private static readonly EthereumAddress _testAddress = (EthereumAddress)Constants.TestEthereumAddress;
+        private static readonly byte[] _testERC20AssetData = ("0xf47261b0000000000000000000000000646934" +
+                "251e9045f41ddf7145dea5cd63cd45d8da").HexToByteArray();
+
+        private static readonly byte[] _testERC721AssetData = ("0x0257179200000000000000000000000064693425" +
+            "1e9045f41ddf7145dea5cd63cd45d8da00" +"00000000000000000000000000000000000000000000000000000000000001").HexToByteArray();
 
         [TestMethod]
         public void ERC20AssetDataEncoding()
         {
             byte[] assetData = ERC20Asset.Create(_testAddress).AssetData;
-
-            byte[] expectedAssetData = ("0xf47261b0000000000000000000000000646934" +
-                "251e9045f41ddf7145dea5cd63cd45d8da").HexToByteArray();
-
-            CollectionAssert.AreEqual(expectedAssetData, assetData);
+            byte[] expectedAssetData = _testERC20AssetData;
+            CollectionAssert.AreEqual(_testERC20AssetData, assetData);
         }
 
         [TestMethod]
         public void ERC721AssetDataEncoding()
         {
             byte[] assetData = ERC721Asset.Create(_testAddress, 1).AssetData;
-
-            byte[] expectedAssetData = ("0x02571792000000000000000000000000646934251e9045f41ddf7145dea5cd63cd45d8da00" +
-                "00000000000000000000000000000000000000000000000000000000000001").HexToByteArray();
-
-            CollectionAssert.AreEqual(expectedAssetData, assetData);
+            CollectionAssert.AreEqual(_testERC721AssetData, assetData);
         }
 
         [TestMethod]
         public void ERC20AssetCreationFromAssetData()
         {
-            byte[] assetData = ("0xf47261b0000000000000000000000000646934" +
-                "251e9045f41ddf7145dea5cd63cd45d8da").HexToByteArray();
+            ERC20Asset asset = ERC20Asset.Create(_testERC20AssetData);
+            Assert.AreEqual(_testAddress, asset.TokenAddress);
+        }
 
-            ERC20Asset asset = ERC20Asset.Create(assetData);
+        [TestMethod]
+        public void ERC721AssetCreationFromAssetData()
+        {
+            ERC721Asset asset = ERC721Asset.Create(_testERC721AssetData);
+            Assert.AreEqual(1, asset.TokenId);
+            Assert.AreEqual((EthereumAddress)(Constants.TestEthereumAddress), asset.TokenAddress);
         }
 
     }
