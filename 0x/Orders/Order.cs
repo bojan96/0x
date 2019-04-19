@@ -1,4 +1,5 @@
 ﻿using EIP712;
+using System;
 using System.Numerics;
 using ZeroX.Assets;
 using ZeroX.Utilities;
@@ -7,6 +8,8 @@ namespace ZeroX.Orders
 {
     public class Order
     {
+        // TODO: Add docs, property validation
+
         public EthereumAddress MakerAddress { get; set; }
         public EthereumAddress TakerAddress { get; set; }
         public EthereumAddress FeeRecipientAddress { get; set; }
@@ -20,8 +23,17 @@ namespace ZeroX.Orders
         public Asset MakerAsset { get; set; }
         public Asset TakerAsset { get; set; }
 
+        /// <summary>
+        /// Hashes given order
+        /// </summary>
+        /// <param name="exchangeAddress">Address of Exchange contract</param>
+        /// <returns>Order signature</returns>
+        /// <exception cref="ArgumentNullException">exchangeAddress is null</exception>
         public byte[] Hash(EthereumAddress exchangeAddress)
         {
+            if (exchangeAddress == null)
+                throw new ArgumentNullException(nameof(exchangeAddress));
+
             EIP712Domain domain = new EIP712Domain()
             {
                 Name = "0x Protocol",
@@ -29,9 +41,7 @@ namespace ZeroX.Orders
                 VerifyingContract = exchangeAddress.ToString()
             };
 
-            var ord = EIP712Order;
-            var res = EIP712.EIP712.Encode(ord, domain);
-            return EIP712.EIP712.Hash(ord, domain);
+            return EIP712.EIP712.Hash(EIP712Order, domain);
         }
 
         private OrderInternal EIP712Order
