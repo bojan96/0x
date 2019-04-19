@@ -8,6 +8,7 @@ namespace ZeroX.Assets
     {
 
         protected static byte[] EncodeAddress(EthereumAddress address)
+            // Address type encoder pads address with zeros to 32 bytes
             => new AddressTypeEncoder().Encode(address.ToString());
 
         protected TokenAsset(byte[] assetData, EthereumAddress tokenAddress)

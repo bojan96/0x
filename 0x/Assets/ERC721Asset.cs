@@ -9,6 +9,10 @@ using ZeroX.Utilities;
 
 namespace ZeroX.Assets
 {
+
+    /// <summary>
+    /// ERC721 Asset
+    /// </summary>
     public class ERC721Asset : TokenAsset
     {
 
@@ -19,7 +23,11 @@ namespace ZeroX.Assets
                 EncodeAddress(tokenAddress), new IntTypeEncoder().Encode(tokenId));
 
         private ERC721Asset(byte[] assetData)
-            : base(assetData, EthereumAddress.FromByteArray(assetData.Slice(4))) { }
+            : base(assetData, EthereumAddress.FromByteArray(assetData.Slice(16, 36)))
+        {
+            // Reversing due to fact that BigInteger expects little endian order
+            TokenId = new BigInteger(assetData.Slice(36).Reverse().ToArray());
+        }
 
         private ERC721Asset(EthereumAddress tokenAddress, BigInteger tokenId)
             : base(EncodeAssetData(tokenAddress, tokenId), tokenAddress) { }
@@ -29,9 +37,9 @@ namespace ZeroX.Assets
         /// <summary>
         /// Creates an ERC721 asset
         /// </summary>
-        /// <param name="tokenAddress">Address of erc721 token</param>
+        /// <param name="tokenAddress">Address of ERC721 token</param>
         /// <param name="tokenId">Token id to exchange</param>
-        /// <returns>Instance of <see cref="ERC721Asset"/></returns>
+        /// <returns><see cref="ERC721Asset"/> representing ERC721 asset</returns>
         /// <exception cref="ArgumentNullException">tokenAddress is null</exception>
         /// <exception cref="ArgumentException">tokenId invalid value</exception>
         public static ERC721Asset Create(EthereumAddress tokenAddress, BigInteger tokenId)
@@ -43,6 +51,13 @@ namespace ZeroX.Assets
             return new ERC721Asset(tokenAddress, tokenId);
         }
 
+        /// <summary>
+        /// Creates an ERC721 asset from ERC721 compatible asset data
+        /// </summary>
+        /// <param name="assetData">ERC721 asset data</param>
+        /// <returns><see cref="ERC721Asset"/> representing ERC721 asset</returns>
+        /// <exception cref="ArgumentNullException">assetData is null</exception>
+        /// <exception cref="ArgumentException">asset data invalid value</exception>
         public static ERC721Asset Create(byte[] assetData)
         {
             assetData = assetData ?? throw new ArgumentNullException(nameof(assetData));
