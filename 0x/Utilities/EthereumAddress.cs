@@ -7,12 +7,16 @@ namespace ZeroX.Utilities
 {
     public class EthereumAddress
     {
+
+        // TODO: Add docs
+
         private string _address;
         private const string ZeroAddressLiteral = "0x0000000000000000000000000000000000000000";
 
         public static EthereumAddress ZeroAddress { get; } = new EthereumAddress(ZeroAddressLiteral);
         public bool IsChecksumAddress => AddressUtil.Current.IsChecksumAddress(_address);
         public byte[] Bytes => _address.HexToByteArray();
+
 
         public EthereumAddress(string address)
         {
@@ -56,6 +60,14 @@ namespace ZeroX.Utilities
             {
                 throw new InvalidCastException($"Can not cast string to EthereumAddress", ex);
             }
+        }
+
+        public static EthereumAddress FromByteArray(byte[] address)
+        {
+            if (address == null)
+                throw new ArgumentNullException(nameof(address));
+
+            return new EthereumAddress(address.ToHex(true));
         }
     }
 }
