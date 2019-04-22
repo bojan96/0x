@@ -1,6 +1,4 @@
-﻿using ZeroX.Utilities;
-
-namespace ZeroX.Contracts
+﻿namespace ZeroX.Utilities
 {
     public class Account
     {

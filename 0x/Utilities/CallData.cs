@@ -1,6 +1,6 @@
 ﻿using Nethereum.Contracts;
 
-namespace ZeroX.Contracts
+namespace ZeroX.Utilities
 {
     public class CallData
     {
