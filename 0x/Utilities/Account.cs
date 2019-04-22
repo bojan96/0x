@@ -1,5 +1,6 @@
 ﻿namespace ZeroX.Utilities
 {
+    // TODO: Add argument validation
     public class Account
     {
         public Account(EthereumAddress address, string privateKey)
