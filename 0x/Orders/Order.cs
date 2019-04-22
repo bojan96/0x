@@ -44,7 +44,7 @@ namespace ZeroX.Orders
             return EIP712.EIP712.Hash(EIP712Order, domain);
         }
 
-        private OrderInternal EIP712Order
+        internal OrderInternal EIP712Order
         {
             get => new OrderInternal
             {
