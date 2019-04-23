@@ -11,8 +11,8 @@ namespace ZeroX.Utilities
             GasLimit = gasLimit;
             Nonce = nonce;
         }
-        public BigInteger GasPrice { get; set; }
-        public int GasLimit { get; set; }
-        public BigInteger Nonce { get; set; }
+        public BigInteger GasPrice { get; set; } = - 1;
+        public int GasLimit { get; set; } = -1;
+        public BigInteger Nonce { get; set; } = -1;
     }
 }
