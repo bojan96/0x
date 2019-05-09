@@ -18,6 +18,11 @@ namespace ZeroX.Utilities
             GasLimit = gasLimit;
         }
 
+        public TxParameters(int gasLimit)
+        {
+            GasLimit = gasLimit;
+        }
+
         public BigInteger GasPrice { get; set; } = - 1;
         public int GasLimit { get; set; } = -1;
         public BigInteger Nonce { get; set; } = -1;
