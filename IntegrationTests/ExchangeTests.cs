@@ -1,11 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Nethereum.Web3;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using ZeroX.Assets;
 using ZeroX.Contracts;
 using ZeroX.Orders;
 using ZeroX.Utilities;
+using Transaction = ZeroX.Transactions.Transaction;
 
 namespace IntegrationTests
 {
@@ -28,10 +30,9 @@ namespace IntegrationTests
         /// </summary>
         private const string MakerAddress = "0x5409ed021d9299bf6814279a6a1411a7e866a631";
 
-        /// <summary>
-        /// Private key corresponding to MakerAddress
-        /// </summary>
         private const string MakerPrivateKey = "0xf2f48ee19680706196e2e339e5da3491186e0c4c5030670656b0e0164837257d";
+
+        private const string TakerPrivateKey = "0x5d862464fe9303452126c8bc94274b8c5f9874cbd219789b3eb2128075a76f72";
 
         /// <summary>
         /// Owner of DGD ERC20 token, has balance of at least 100000 DGD
@@ -48,40 +49,43 @@ namespace IntegrationTests
         /// </summary>
         private const string TakerTokenAddress = "0x25b8fe1de9daf8ba351890744ff28cf7dfa8f5e3";
 
+        private const string RpcURL = "http://localhost:8545";
+
         [TestMethod]
         public async Task ExchangeTokens()
         {
             EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
-            Exchange exchange = new Exchange("http://localhost:8545", exchangeAddress, new Account(CallerPrivateKey));
+            Exchange exchange = new Exchange(RpcURL, exchangeAddress, new Account(CallerPrivateKey));
             Order order = new Order
             {
                 MakerAddress = (EthereumAddress)MakerAddress,
                 TakerAddress = (EthereumAddress)TakerAddress,
-                SenderAddress = EthereumAddress.ZeroAddress,
-                FeeRecipientAddress = EthereumAddress.ZeroAddress,
-                MakerFee = 0,
-                TakerFee = 0,
+                SenderAddress = exchange.CallerAccount.Address,
+                FeeRecipientAddress = exchange.CallerAccount.Address,
+                MakerFee = 10,
+                TakerFee = 10,
                 MakerAssetAmount = 100,
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                ExpirationTimeSeconds = (long)(DateTime.UtcNow.AddDays(1) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds,
-                Salt = 0
+                // Setting day to 22 causes one missing byte in signature
+                ExpirationTimeSeconds = (long)(new DateTime(2030, 1, 27, 0, 0, 0, DateTimeKind.Utc)
+                - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+                Salt = new Random().Next()
             };
 
-            byte[] signature = order.Sign(exchangeAddress, MakerPrivateKey);
-            try
-            {
+            byte[] makerSignature = order.Sign(exchangeAddress, MakerPrivateKey);
+            Debug.Assert(makerSignature.Length == 66);
+            Transaction tx = Exchange.FillOrderGet0xTx(order, order.TakerAssetAmount, makerSignature, exchangeAddress, new Web3());
+            byte[] takerSignature = tx.Sign(exchangeAddress, TakerPrivateKey);
+            Debug.Assert(takerSignature.Length == 66);
 
-                string hash = await exchange.FillOrderAsync(order, 100, signature,
-                    new TxParameters(
-                        Web3.Convert.ToWei(1, Nethereum.Util.UnitConversion.EthUnit.Gwei),
-                        300000));
-            }
-            catch(Exception ex)
-            {
-
-            }
+            string hash = await exchange.FillOrderViaExecuteTx(
+                order,
+                order.TakerAssetAmount,
+                makerSignature,
+                takerSignature,
+                new TxParameters(1000000));
         }
     }
 }
