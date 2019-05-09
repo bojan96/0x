@@ -2,6 +2,9 @@
 using System.Runtime.CompilerServices;
 using ZeroX.Utilities;
 using Nethereum.Hex.HexConvertors.Extensions;
+using EIP712;
+using System;
+using Nethereum.Util;
 
 [assembly: InternalsVisibleTo("Tests")]
 
@@ -34,15 +37,32 @@ namespace ZeroX.Transactions
 
         public byte[] Hash(EthereumAddress exchangeAddress)
         {
-            var hash = EIP712.EIP712.Hash(EIP712Transaction, new EIP712.EIP712Domain
+            if (exchangeAddress == null)
+                throw new ArgumentNullException(nameof(exchangeAddress));
+
+            byte[] hash = EIP712.EIP712.Hash(EIP712Transaction, GetEIP712Domain(exchangeAddress));
+
+            return hash;
+        }
+
+        public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
+        {
+            if (exchangeAddress == null)
+                throw new ArgumentNullException(nameof(exchangeAddress));
+            if (privateKey == null)
+                throw new ArgumentNullException(nameof(privateKey));
+           EthereumSignature signature = EIP712.EIP712.Sign(EIP712Transaction, GetEIP712Domain(exchangeAddress), privateKey);
+
+            return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
+        }
+
+        private EIP712Domain GetEIP712Domain(EthereumAddress exchangeAddress)
+            => new EIP712.EIP712Domain
             {
                 Name = "0x Protocol",
                 Version = "2",
                 VerifyingContract = exchangeAddress
-            });
-
-            return hash;
-        }
+            };
 
     }
 }
