@@ -9,10 +9,6 @@ namespace ZeroX.Orders
 {
     public class Order
     {
-
-        private static readonly byte[] _signatureType = new byte[] { 0x2 };
-
-
         // TODO: Add docs, property validation
 
         public EthereumAddress MakerAddress { get; set; }
@@ -57,7 +53,7 @@ namespace ZeroX.Orders
             EthereumSignature signature = EIP712.EIP712.Sign(EIP712Order,
                 GetEIP712Domain(exchangeAddress), privateKey);
 
-            return ByteUtil.Merge(signature.V, signature.R, signature.S, _signatureType);
+            return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
 
         internal OrderInternal EIP712Order
