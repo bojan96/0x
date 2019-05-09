@@ -13,13 +13,13 @@ namespace ZeroX.Transactions
 
         public BigInteger Salt { get; }
         public EthereumAddress SignerAddress { get; }
-        public string TxData { get; }
+        public byte[] TxData { get; }
 
         internal Transaction(EthereumAddress signerAddress, string txData)
         {
             Salt = 0; // Make random
             SignerAddress = signerAddress;
-            TxData = txData;
+            TxData = txData.HexToByteArray();
         }
 
         internal TransactionEIP712 EIP712Transaction
@@ -28,7 +28,7 @@ namespace ZeroX.Transactions
             {
                 Salt = Salt,
                 SignerAddress = SignerAddress,
-                Data = TxData.HexToByteArray()
+                Data = TxData
             };
         }
 
