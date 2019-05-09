@@ -3,33 +3,25 @@ using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Numerics;
-using System.Reflection;
 using System.Threading.Tasks;
 using ZeroX.Enums;
 using ZeroX.Orders;
 using ZeroX.Utilities;
+using Transaction = ZeroX.Transactions.Transaction;
+using Nethereum.Hex.HexConvertors.Extensions;
 
 namespace ZeroX.Contracts
 {
-    public class Exchange
+    public class Exchange : SmartContract
     {
         // TODO: Add argument validation, add docs
 
         static Exchange()
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ZeroX.ABI.Exchange.json");
-            Debug.Assert(stream != null);
-
-            using (stream)
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                _abi = reader.ReadToEnd();
-            }
-
+            _abi = LoadABI(nameof(Exchange));
         }
 
         private static readonly Dictionary<Network, EthereumAddress> _contractAddressses 
@@ -42,25 +34,36 @@ namespace ZeroX.Contracts
             };
 
         private static readonly string _abi;
-        private readonly Web3 _web3;
-
-        public EthereumAddress ContractAddress { get; }
-        public Account CallerAccount { get; set; }
 
         public Exchange(string rpcUrl, EthereumAddress contractAddress, Account callerAccount)
+            : base(rpcUrl, contractAddress, callerAccount)
         {
-            ContractAddress = contractAddress;
-            CallerAccount = callerAccount;
-            _web3 = new Web3(rpcUrl);
         }
 
         public Exchange(string rpcUrl, Network network, Account callerAccount)
             : this(rpcUrl, _contractAddressses[network], callerAccount)
         { }
 
-        public async Task<string> FillOrderAsync(Order order, BigInteger takerAssetAmount, byte[] signature, TxParameters txParams = null)
+        public async Task<string> FillOrderViaExecuteTx(Order order, BigInteger takerAssetFillAmount, 
+            byte[] makerSignature, byte[] takerSignature, TxParameters txParams = null)
         {
-            CallData callData = FillOrderCallData(order, takerAssetAmount, signature, ContractAddress, _web3);
+
+            // TODO: More checks
+            if (order.SenderAddress != CallerAccount.Address)
+                throw new ArgumentException($"{nameof(order)}.{nameof(Order.SenderAddress)} " +
+                    $"must be equal to caller account address", nameof(order));
+
+
+            CallData callData = FillOrderViaExecuteTxCallData(order, takerAssetFillAmount, 
+                makerSignature, takerSignature, 0, ContractAddress, _web3);
+            
+            return await SendTx(callData, txParams);
+        }
+
+        public async Task<string> FillOrderAsync(Order order, BigInteger takerAssetFillAmount, byte[] signature, TxParameters txParams = null)
+        {
+            // TODO: Check whether order.takerAddress == CallerAccount.Address
+            CallData callData = FillOrderCallData(order, takerAssetFillAmount, signature, ContractAddress, _web3);
 
             TransactionInput tx = new TransactionInput
             {
@@ -86,21 +89,53 @@ namespace ZeroX.Contracts
             return await callData.Function.SendTransactionAsync(tx, callData.Parameters);          
         }
 
-        /// <summary>
-        /// Get next nonce from node
-        /// </summary>
-        /// <returns>Next nonce for caller</returns>
-        private async Task<HexBigInteger> GetNonce()
-            => await _web3.Eth.Transactions.GetTransactionCount.SendRequestAsync(CallerAccount.Address);
-        
-        public static CallData FillOrderCallData(Order order, BigInteger takerAssetAmount, byte[] signature, EthereumAddress exchangeAddress, Web3 web3)
+        public static CallData FillOrderViaExecuteTxCallData(Order order, BigInteger takerAssetFillAmount,
+            byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, EthereumAddress exchangeAddress, Web3 web3)
         {
+            Contract exchangeContract = web3.Eth.GetContract(_abi, exchangeAddress);
+            Function executeTxFunction = exchangeContract.GetFunction("executeTransaction");
+            Function fillOrderFunction = exchangeContract.GetFunction("fillOrder");
+            string fillOrderTxData = fillOrderFunction.GetData(
+                new object[] { order.EIP712Order, takerAssetFillAmount, makerSignature });
 
+            object[] parameters = new object[]
+            {
+                txSalt,
+                order.TakerAddress.ToString(),
+                fillOrderTxData.HexToByteArray(),
+                takerSignature
+            };
+
+            return new CallData(executeTxFunction, parameters);
+        }
+
+        public static Transaction FillOrderGet0xTx(Order order, BigInteger takerAssetFillAmount, byte[] makerSignature, EthereumAddress exchangeAddress, Web3 web3)
+        {
+            string txData = GetTxData("fillOrder", 
+                new object[] 
+                {
+                    order.EIP712Order,
+                    takerAssetFillAmount,
+                    makerSignature
+                }, 
+                exchangeAddress, 
+                web3);
+
+            return new Transaction(order.TakerAddress, txData);
+        }
+
+
+        private static string GetTxData(string functionName, object[] functionParams, EthereumAddress exchangeAddress, Web3 web3)
+            => web3.Eth.GetContract(_abi, exchangeAddress).GetFunction(functionName).GetData(functionParams);
+        
+
+        public static CallData FillOrderCallData(Order order, BigInteger takerAssetFillAmount, byte[] signature, EthereumAddress exchangeAddress, Web3 web3)
+        {
             Function fillOrderFunction = web3.Eth.GetContract(_abi, exchangeAddress).GetFunction("fillOrder");
             object[] parameters = new object[]
             {
                 order.EIP712Order,
-                takerAssetAmount,
+                takerAssetFillAmount,
                 signature
             };
 
