@@ -1,4 +1,5 @@
 ﻿using Nethereum.Contracts;
+using Nethereum.Hex.HexConvertors.Extensions;
 
 namespace ZeroX.Utilities
 {
@@ -8,12 +9,12 @@ namespace ZeroX.Utilities
         {
             Function = function;
             Parameters = parameters;
-            TxData = Function.GetData(Parameters);
+            TxData = Function.GetData(Parameters).HexToByteArray();
         }
 
         public Function Function { get; }
         public object[] Parameters { get; }
 
-        public string TxData { get; }
+        public byte[] TxData { get; }
     }
 }
