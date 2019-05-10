@@ -94,9 +94,13 @@ namespace ZeroX.Contracts
         {
             Contract exchangeContract = web3.Eth.GetContract(_abi, exchangeAddress);
             Function executeTxFunction = exchangeContract.GetFunction("executeTransaction");
-            Function fillOrderFunction = exchangeContract.GetFunction("fillOrder");
-            string fillOrderTxData = fillOrderFunction.GetData(
-                new object[] { order.EIP712Order, takerAssetFillAmount, makerSignature });
+            string fillOrderTxData = GetTxData(_abi, "fillOrder", 
+                new object[] 
+                {
+                    order.EIP712Order,
+                    takerAssetFillAmount,
+                    makerSignature
+                });
 
             object[] parameters = new object[]
             {
@@ -109,25 +113,18 @@ namespace ZeroX.Contracts
             return new CallData(executeTxFunction, parameters);
         }
 
-        public static Transaction FillOrderGet0xTx(Order order, BigInteger takerAssetFillAmount, byte[] makerSignature, EthereumAddress exchangeAddress, Web3 web3)
+        public static Transaction FillOrderGet0xTx(Order order, BigInteger takerAssetFillAmount, byte[] makerSignature)
         {
-            string txData = GetTxData("fillOrder", 
+            string txData = GetTxData(_abi, "fillOrder", 
                 new object[] 
                 {
                     order.EIP712Order,
                     takerAssetFillAmount,
                     makerSignature
-                }, 
-                exchangeAddress, 
-                web3);
+                });
 
             return new Transaction(order.TakerAddress, txData);
         }
-
-
-        private static string GetTxData(string functionName, object[] functionParams, EthereumAddress exchangeAddress, Web3 web3)
-            => web3.Eth.GetContract(_abi, exchangeAddress).GetFunction(functionName).GetData(functionParams);
-        
 
         public static CallData FillOrderCallData(Order order, BigInteger takerAssetFillAmount, byte[] signature, EthereumAddress exchangeAddress, Web3 web3)
         {

@@ -56,6 +56,9 @@ namespace ZeroX.Contracts
             return await _web3.TransactionManager.SendTransactionAsync(tx);
         }
 
+        protected static string GetTxData(string abi, string functionName, object[] functionParams)
+            => new Web3().Eth.GetContract(abi, EthereumAddress.ZeroAddress).GetFunction(functionName).GetData(functionParams);
+
         protected static string LoadABI(string contractName)
         {
             Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ZeroX.ABI.{contractName}.json");
