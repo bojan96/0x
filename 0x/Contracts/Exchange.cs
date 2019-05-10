@@ -44,7 +44,7 @@ namespace ZeroX.Contracts
             : this(rpcUrl, _contractAddressses[network], callerAccount)
         { }
 
-        public async Task<string> FillOrderViaExecuteTx(Order order, BigInteger takerAssetFillAmount, 
+        public async Task<string> FillOrderExecTxAsync(Order order, BigInteger takerAssetFillAmount, 
             byte[] makerSignature, byte[] takerSignature, TxParameters txParams = null)
         {
 
@@ -54,7 +54,7 @@ namespace ZeroX.Contracts
                     $"must be equal to caller account address", nameof(order));
 
 
-            CallData callData = FillOrderViaExecuteTxCallData(order, takerAssetFillAmount, 
+            CallData callData = FillOrderExecTxCallData(order, takerAssetFillAmount, 
                 makerSignature, takerSignature, 0, ContractAddress, _web3);
             
             return await SendTx(callData, txParams);
@@ -89,7 +89,7 @@ namespace ZeroX.Contracts
             return await callData.Function.SendTransactionAsync(tx, callData.Parameters);          
         }
 
-        public static CallData FillOrderViaExecuteTxCallData(Order order, BigInteger takerAssetFillAmount,
+        public static CallData FillOrderExecTxCallData(Order order, BigInteger takerAssetFillAmount,
             byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, EthereumAddress exchangeAddress, Web3 web3)
         {
             Contract exchangeContract = web3.Eth.GetContract(_abi, exchangeAddress);

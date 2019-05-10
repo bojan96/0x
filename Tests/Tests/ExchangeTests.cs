@@ -14,7 +14,7 @@ namespace Tests.Tests
     public class ExchangeTests
     {
         [TestMethod]
-        public void FillOrderViaExecuteTxCallData()
+        public void FillOrderExecTxCallData()
         {
             // We use invalid data just because we want to test encoding of tx data
             // for executeTransaction
@@ -38,7 +38,7 @@ namespace Tests.Tests
             BigInteger takerAssetFillAmount = 0;
             byte[] signature = new byte[1]; 
 
-            CallData callData = Exchange.FillOrderViaExecuteTxCallData(order, takerAssetFillAmount, signature, 
+            CallData callData = Exchange.FillOrderExecTxCallData(order, takerAssetFillAmount, signature, 
                 signature, 0, EthereumAddress.ZeroAddress, new Web3());
 
             byte[] expectedTxData = ("0xbfc8bfce00000000000000000000000000000000" +
