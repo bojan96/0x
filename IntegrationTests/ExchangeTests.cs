@@ -85,6 +85,7 @@ namespace IntegrationTests
                 order.TakerAssetAmount,
                 makerSignature,
                 takerSignature,
+                tx.Salt,
                 new TxParameters(1000000));
         }
     }

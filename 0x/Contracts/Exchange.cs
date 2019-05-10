@@ -45,7 +45,7 @@ namespace ZeroX.Contracts
         { }
 
         public async Task<string> FillOrderExecTxAsync(Order order, BigInteger takerAssetFillAmount, 
-            byte[] makerSignature, byte[] takerSignature, TxParameters txParams = null)
+            byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, TxParameters txParams = null)
         {
 
             // TODO: More checks
@@ -55,7 +55,7 @@ namespace ZeroX.Contracts
 
 
             CallData callData = FillOrderExecTxCallData(order, takerAssetFillAmount, 
-                makerSignature, takerSignature, 0, ContractAddress, _web3);
+                makerSignature, takerSignature, txSalt, ContractAddress, _web3);
             
             return await SendTx(callData, txParams);
         }
