@@ -14,8 +14,8 @@ namespace ZeroX.Utilities
         public static BigInteger GenerateSalt()
         {
             byte[] randomInt = new byte[33];
-            randomInt[32] = 0; // Ensure we will not generate negative value
             _random.NextBytes(randomInt);
+            randomInt[32] = 0; // Ensure we will not generate negative value
 
             return new BigInteger(randomInt);
         }
