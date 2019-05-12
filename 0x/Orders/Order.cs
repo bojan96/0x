@@ -37,7 +37,7 @@ namespace ZeroX.Orders
 
             EIP712Domain domain = GetEIP712Domain(exchangeAddress);
 
-            return EIP712.EIP712.Hash(EIP712Order, domain);
+            return EIP712Service.Hash(EIP712Order, domain);
         }
 
         private EIP712Domain GetEIP712Domain(EthereumAddress exchangeAddress)
@@ -50,7 +50,7 @@ namespace ZeroX.Orders
 
         public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
         {
-            EthereumSignature signature = EIP712.EIP712.Sign(EIP712Order,
+            EthereumSignature signature = EIP712Service.Sign(EIP712Order,
                 GetEIP712Domain(exchangeAddress), privateKey);
 
             return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);

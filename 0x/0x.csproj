@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EIP712" Version="0.0.1-alpha" />
+    <PackageReference Include="EIP712" Version="1.0.0-alpha1" />
     <PackageReference Include="Nethereum.ABI" Version="3.3.0" />
     <PackageReference Include="Nethereum.Util" Version="3.3.0" />
     <PackageReference Include="Nethereum.Web3" Version="3.3.0" />

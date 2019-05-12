@@ -5,6 +5,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using EIP712;
 using System;
 using Nethereum.Util;
+using Random = ZeroX.Utilities.Random;
 
 [assembly: InternalsVisibleTo("Tests")]
 
@@ -20,7 +21,7 @@ namespace ZeroX.Transactions
 
         internal Transaction(EthereumAddress signerAddress, string txData)
         {
-            Salt = 0; // Make random
+            Salt = Random.GenerateSalt();
             SignerAddress = signerAddress;
             TxData = txData.HexToByteArray();
         }
@@ -40,7 +41,7 @@ namespace ZeroX.Transactions
             if (exchangeAddress == null)
                 throw new ArgumentNullException(nameof(exchangeAddress));
 
-            byte[] hash = EIP712.EIP712.Hash(EIP712Transaction, GetEIP712Domain(exchangeAddress));
+            byte[] hash = EIP712Service.Hash(EIP712Transaction, GetEIP712Domain(exchangeAddress));
 
             return hash;
         }
@@ -51,7 +52,7 @@ namespace ZeroX.Transactions
                 throw new ArgumentNullException(nameof(exchangeAddress));
             if (privateKey == null)
                 throw new ArgumentNullException(nameof(privateKey));
-           EthereumSignature signature = EIP712.EIP712.Sign(EIP712Transaction, GetEIP712Domain(exchangeAddress), privateKey);
+           EthereumSignature signature = EIP712Service.Sign(EIP712Transaction, GetEIP712Domain(exchangeAddress), privateKey);
 
             return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
