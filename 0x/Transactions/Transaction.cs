@@ -7,9 +7,6 @@ using System;
 using Nethereum.Util;
 using Random = ZeroX.Utilities.Random;
 
-[assembly: InternalsVisibleTo("Tests")]
-
-
 namespace ZeroX.Transactions
 {
     public class Transaction
