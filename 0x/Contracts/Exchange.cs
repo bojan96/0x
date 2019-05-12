@@ -47,12 +47,10 @@ namespace ZeroX.Contracts
         public async Task<string> FillOrderExecTxAsync(Order order, BigInteger takerAssetFillAmount, 
             byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, TxParameters txParams = null)
         {
-
-            // TODO: More checks
+            // TODO: More checks ?
             if (order.SenderAddress != CallerAccount.Address)
                 throw new ArgumentException($"{nameof(order)}.{nameof(Order.SenderAddress)} " +
                     $"must be equal to caller account address", nameof(order));
-
 
             CallData callData = FillOrderExecTxCallData(order, takerAssetFillAmount, 
                 makerSignature, takerSignature, txSalt, ContractAddress, _web3);
@@ -62,31 +60,13 @@ namespace ZeroX.Contracts
 
         public async Task<string> FillOrderAsync(Order order, BigInteger takerAssetFillAmount, byte[] signature, TxParameters txParams = null)
         {
-            // TODO: Check whether order.takerAddress == CallerAccount.Address
+            // TODO: More validation ?
+            if (order.TakerAddress != CallerAccount.Address)
+                throw new ArgumentException($"{nameof(order)}.{nameof(Order.TakerAddress)} must be equal to caller account address", nameof(order));
+
             CallData callData = FillOrderCallData(order, takerAssetFillAmount, signature, ContractAddress, _web3);
 
-            TransactionInput tx = new TransactionInput
-            {
-                From = CallerAccount.Address,
-                To = ContractAddress,
-                Data = callData.Function.GetData(callData.Parameters)
-            };
-
-            if(txParams == null || txParams.GasLimit < 0)
-            {
-                tx.Gas = await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(tx);
-            }
-            else
-            {
-                tx.Gas = new HexBigInteger(txParams.GasLimit);
-            }
-
-            tx.GasPrice = new HexBigInteger( txParams == null || txParams.GasPrice < 0 ? 
-                Web3.Convert.ToWei(1, Nethereum.Util.UnitConversion.EthUnit.Gwei) : txParams.GasPrice);
-
-            tx.Nonce = txParams == null || txParams.Nonce < 0 ? await GetNonce() : new HexBigInteger(txParams.Nonce);
-
-            return await callData.Function.SendTransactionAsync(tx, callData.Parameters);          
+            return await SendTx(callData, txParams);
         }
 
         public static CallData FillOrderExecTxCallData(Order order, BigInteger takerAssetFillAmount,
@@ -112,6 +92,10 @@ namespace ZeroX.Contracts
 
             return new CallData(executeTxFunction, parameters);
         }
+
+        public static CallData FillOrderExecTxCallData(Order order, BigInteger takerAssetFillAmount,
+            byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, Network network, Web3 web3)
+            => FillOrderExecTxCallData(order, takerAssetFillAmount, makerSignature, takerSignature, txSalt, _contractAddressses[network], web3);
 
         public static Transaction FillOrderGet0xTx(Order order, BigInteger takerAssetFillAmount, byte[] makerSignature)
         {
