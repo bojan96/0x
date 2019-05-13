@@ -17,4 +17,8 @@
     <ProjectReference Include="..\0x\0x.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Ganache\" />
+  </ItemGroup>
+
 </Project>
