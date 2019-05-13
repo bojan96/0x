@@ -47,7 +47,10 @@ namespace ZeroX.Contracts
         public async Task<string> FillOrderExecTxAsync(Order order, BigInteger takerAssetFillAmount, 
             byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, TxParameters txParams = null)
         {
-            // TODO: More checks ?
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            makerSignature = makerSignature ?? throw new ArgumentNullException(nameof(makerSignature));
+            takerSignature = takerSignature ?? throw new ArgumentNullException(nameof(takerSignature));
+
             if (order.SenderAddress != CallerAccount.Address)
                 throw new ArgumentException($"{nameof(order)}.{nameof(Order.SenderAddress)} " +
                     $"must be equal to caller account address", nameof(order));
@@ -60,7 +63,9 @@ namespace ZeroX.Contracts
 
         public async Task<string> FillOrderAsync(Order order, BigInteger takerAssetFillAmount, byte[] signature, TxParameters txParams = null)
         {
-            // TODO: More validation ?
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            signature = signature ?? throw new ArgumentNullException(nameof(signature));
+
             if (order.TakerAddress != CallerAccount.Address)
                 throw new ArgumentException($"{nameof(order)}.{nameof(Order.TakerAddress)} " +
                     $"must be equal to caller account address", nameof(order));
@@ -73,6 +78,12 @@ namespace ZeroX.Contracts
         public static CallData FillOrderExecTxCallData(Order order, BigInteger takerAssetFillAmount,
             byte[] makerSignature, byte[] takerSignature, BigInteger txSalt, EthereumAddress exchangeAddress, Web3 web3)
         {
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            makerSignature = makerSignature ?? throw new ArgumentNullException(nameof(makerSignature));
+            takerSignature = takerSignature ?? throw new ArgumentNullException(nameof(takerSignature));
+            exchangeAddress = exchangeAddress ?? throw new ArgumentNullException(nameof(exchangeAddress));
+            web3 = web3 ?? throw new ArgumentNullException(nameof(web3));
+                
             Contract exchangeContract = web3.Eth.GetContract(_abi, exchangeAddress);
             Function executeTxFunction = exchangeContract.GetFunction("executeTransaction");
             string fillOrderTxData = GetTxData(_abi, "fillOrder", 
@@ -100,6 +111,9 @@ namespace ZeroX.Contracts
 
         public static Transaction FillOrderGet0xTx(Order order, BigInteger takerAssetFillAmount, byte[] makerSignature)
         {
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            makerSignature = makerSignature ?? throw new ArgumentNullException(nameof(makerSignature));
+
             string txData = GetTxData(_abi, "fillOrder", 
                 new object[] 
                 {
@@ -111,8 +125,15 @@ namespace ZeroX.Contracts
             return new Transaction(order.TakerAddress, txData);
         }
 
-        public static CallData FillOrderCallData(Order order, BigInteger takerAssetFillAmount, byte[] signature, EthereumAddress exchangeAddress, Web3 web3)
+        public static CallData FillOrderCallData(Order order, BigInteger takerAssetFillAmount, byte[] signature, 
+            EthereumAddress exchangeAddress, Web3 web3)
         {
+
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            signature = signature ?? throw new ArgumentNullException(nameof(signature));
+            exchangeAddress = exchangeAddress ?? throw new ArgumentNullException(nameof(exchangeAddress));
+            web3 = web3 ?? throw new ArgumentNullException(nameof(web3));
+
             Function fillOrderFunction = web3.Eth.GetContract(_abi, exchangeAddress).GetFunction("fillOrder");
             object[] parameters = new object[]
             {

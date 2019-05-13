@@ -2,6 +2,7 @@
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -18,8 +19,9 @@ namespace ZeroX.Contracts
 
         protected SmartContract(string rpcUrl, EthereumAddress contractAddress, Account callerAccount)
         {
-            ContractAddress = contractAddress;
-            CallerAccount = callerAccount;
+            rpcUrl = rpcUrl ?? throw new ArgumentNullException(nameof(rpcUrl));
+            ContractAddress = contractAddress ?? throw new ArgumentNullException(nameof(contractAddress));
+            CallerAccount = callerAccount ?? throw new ArgumentNullException(nameof(callerAccount));
             _web3 = new Web3(new Nethereum.Web3.Accounts.Account(CallerAccount.PrivateKey), rpcUrl);
         }
 
