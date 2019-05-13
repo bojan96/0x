@@ -62,7 +62,8 @@ namespace ZeroX.Contracts
         {
             // TODO: More validation ?
             if (order.TakerAddress != CallerAccount.Address)
-                throw new ArgumentException($"{nameof(order)}.{nameof(Order.TakerAddress)} must be equal to caller account address", nameof(order));
+                throw new ArgumentException($"{nameof(order)}.{nameof(Order.TakerAddress)} " +
+                    $"must be equal to caller account address", nameof(order));
 
             CallData callData = FillOrderCallData(order, takerAssetFillAmount, signature, ContractAddress, _web3);
 
