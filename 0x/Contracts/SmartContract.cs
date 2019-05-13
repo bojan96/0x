@@ -27,7 +27,7 @@ namespace ZeroX.Contracts
         /// Get next nonce from node
         /// </summary>
         /// <returns>Next nonce for caller</returns>
-        protected async Task<HexBigInteger> GetNonce()
+        private async Task<HexBigInteger> GetNonce()
             => await _web3.Eth.Transactions.GetTransactionCount.SendRequestAsync(CallerAccount.Address);
 
         protected async Task<string> SendTx(CallData callData, TxParameters txParams)
@@ -39,15 +39,9 @@ namespace ZeroX.Contracts
                 Data = callData.TxData.ToHex(true)
             };
 
-            if (txParams == null || txParams.GasLimit < 0)
-            {
-                tx.Gas = await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(tx);
-            }
-            else
-            {
-                tx.Gas = new HexBigInteger(txParams.GasLimit);
-            }
-
+            tx.Gas = txParams == null || txParams.GasLimit < 0 ?
+                await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(tx) : new HexBigInteger(txParams.GasLimit);
+            
             tx.GasPrice = new HexBigInteger(txParams == null || txParams.GasPrice < 0 ?
                 Web3.Convert.ToWei(1, Nethereum.Util.UnitConversion.EthUnit.Gwei) : txParams.GasPrice);
 
