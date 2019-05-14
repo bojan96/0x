@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>ZeroX</RootNamespace>
+    <Version>1.0.0-alpha1</Version>
+    <Authors>Bojan Malinić</Authors>
+    <Description>Library for interacting with 0x smart contracts</Description>
+    <RepositoryUrl>https://github.com/bojan96/0x</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
