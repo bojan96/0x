@@ -55,7 +55,7 @@ namespace IntegrationTests
         public async Task ExchangeTokens()
         {
             EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
-            Exchange exchange = new Exchange(RpcURL, exchangeAddress, new Account(CallerPrivateKey));
+            ExchangeContract exchange = new ExchangeContract(RpcURL, exchangeAddress, new Account(CallerPrivateKey));
             Order order = new Order
             {
                 MakerAddress = (EthereumAddress)MakerAddress,
@@ -76,7 +76,7 @@ namespace IntegrationTests
 
             byte[] makerSignature = order.Sign(exchangeAddress, MakerPrivateKey);
             Debug.Assert(makerSignature.Length == 66);
-            Transaction tx = Exchange.FillOrderGet0xTx(order, order.TakerAssetAmount, makerSignature);
+            Transaction tx = ExchangeContract.FillOrderGet0xTx(order, order.TakerAssetAmount, makerSignature);
             byte[] takerSignature = tx.Sign(exchangeAddress, TakerPrivateKey);
             Debug.Assert(takerSignature.Length == 66);
 

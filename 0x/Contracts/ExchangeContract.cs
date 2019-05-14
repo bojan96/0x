@@ -15,13 +15,13 @@ using Nethereum.Hex.HexConvertors.Extensions;
 
 namespace ZeroX.Contracts
 {
-    public class Exchange : SmartContract
+    public class ExchangeContract : SmartContract
     {
         // TODO: Add argument validation, add docs
 
-        static Exchange()
+        static ExchangeContract()
         {
-            _abi = LoadABI(nameof(Exchange));
+            _abi = LoadABI("Exchange");
         }
 
         private static readonly Dictionary<Network, EthereumAddress> _contractAddressses 
@@ -35,12 +35,12 @@ namespace ZeroX.Contracts
 
         private static readonly string _abi;
 
-        public Exchange(string rpcUrl, EthereumAddress contractAddress, Account callerAccount)
+        public ExchangeContract(string rpcUrl, EthereumAddress contractAddress, Account callerAccount)
             : base(rpcUrl, contractAddress, callerAccount)
         {
         }
 
-        public Exchange(string rpcUrl, Network network, Account callerAccount)
+        public ExchangeContract(string rpcUrl, Network network, Account callerAccount)
             : this(rpcUrl, _contractAddressses[network], callerAccount)
         { }
 

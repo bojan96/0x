@@ -38,7 +38,7 @@ namespace Tests.Tests
             BigInteger takerAssetFillAmount = 0;
             byte[] signature = new byte[1]; 
 
-            CallData callData = Exchange.FillOrderExecTxCallData(order, takerAssetFillAmount, signature, 
+            CallData callData = ExchangeContract.FillOrderExecTxCallData(order, takerAssetFillAmount, signature, 
                 signature, 0, EthereumAddress.ZeroAddress, new Web3());
 
             byte[] expectedTxData = ("0xbfc8bfce00000000000000000000000000000000" +
