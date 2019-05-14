@@ -48,7 +48,8 @@ namespace ZeroX.Transactions
                 throw new ArgumentNullException(nameof(exchangeAddress));
             if (privateKey == null)
                 throw new ArgumentNullException(nameof(privateKey));
-           EthereumSignature signature = EIP712Service.Sign(EIP712Transaction, GetEIP712Domain(exchangeAddress), privateKey);
+
+            EthereumSignature signature = EIP712Service.Sign(EIP712Transaction, GetEIP712Domain(exchangeAddress), privateKey);
 
             return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
