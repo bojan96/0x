@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Nethereum.Web3;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using ZeroX.Assets;
 using ZeroX.Contracts;
@@ -23,7 +23,7 @@ namespace IntegrationTests
         /// <summary>
         /// Caller private key
         /// </summary>
-        private const string CallerPrivateKey = "0xdf02719c4df8b9b8ac7f551fcb5d9ef48fa27eef7a66453879f4d8fdc6e78fb1";
+        private const string SenderPrivateKey = "0xdf02719c4df8b9b8ac7f551fcb5d9ef48fa27eef7a66453879f4d8fdc6e78fb1";
 
         /// <summary>
         /// Owner of REP ERC20 token, has balance of at least 100000 REP
@@ -52,10 +52,10 @@ namespace IntegrationTests
         private const string RpcURL = "http://localhost:8545";
 
         [TestMethod]
-        public async Task ExchangeTokens()
+        public async Task ExchangeTokensViaSender()
         {
             EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
-            ExchangeContract exchange = new ExchangeContract(RpcURL, exchangeAddress, new Account(CallerPrivateKey));
+            ExchangeContract exchange = new ExchangeContract(RpcURL, exchangeAddress, new Account(SenderPrivateKey));
             Order order = new Order
             {
                 MakerAddress = (EthereumAddress)MakerAddress,
@@ -83,6 +83,31 @@ namespace IntegrationTests
                 takerSignature,
                 tx.Salt,
                 new TxParameters(1000000));
+        }
+
+        [TestMethod]
+        public async Task ExchangeTokens()
+        {
+            EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
+            ExchangeContract exchange = new ExchangeContract(RpcURL, exchangeAddress, new Account(TakerPrivateKey));
+            Order order = new Order
+            {
+                MakerAddress = (EthereumAddress)MakerAddress,
+                TakerAddress = (EthereumAddress)TakerAddress,
+                SenderAddress = (EthereumAddress)TakerAddress,
+                FeeRecipientAddress = (EthereumAddress)(Web3.GetAddressFromPrivateKey(SenderPrivateKey)),
+                MakerFee = 10,
+                TakerFee = 10,
+                MakerAssetAmount = 100,
+                TakerAssetAmount = 100,
+                MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
+                TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
+                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                Salt = Random.GenerateSalt()
+            };
+            byte[] signature = order.Sign(exchangeAddress, MakerPrivateKey);
+
+            await exchange.FillOrderAsync(order, order.TakerAssetAmount, signature, new TxParameters(1000000));
         }
     }
 }
