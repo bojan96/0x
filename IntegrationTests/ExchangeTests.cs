@@ -80,7 +80,7 @@ namespace IntegrationTests
             byte[] takerSignature = tx.Sign(exchangeAddress, TakerPrivateKey);
             Debug.Assert(takerSignature.Length == 66);
 
-            string hash = await exchange.FillOrderExecTxAsync(
+            string hash = await exchange.FillOrderAsync(
                 order,
                 order.TakerAssetAmount,
                 makerSignature,
