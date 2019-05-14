@@ -10,20 +10,26 @@ namespace ZeroX.Utilities
     {
         private const int MinGasLimit = 21000;
 
-        public TxParameters(BigInteger gasPrice, int gasLimit, BigInteger nonce)
+        /// <summary>
+        /// Constructs instance of TxParameters class
+        /// </summary>
+        /// <param name="gasPrice">Gas price of transaction, set to null to use contract default values</param>
+        /// <param name="gasLimit">Gas limit of transaction, set to null to use gas estimation</param>
+        /// <param name="nonce">Transaction nonce, set to null to get next nonce value from connected node</param>
+        public TxParameters(BigInteger? gasPrice, BigInteger? gasLimit, BigInteger? nonce)
         {
             GasPrice = gasPrice;
             GasLimit = gasLimit;
             Nonce = nonce;
         }
 
-        public TxParameters(BigInteger gasPrice, int gasLimit)
+        public TxParameters(BigInteger? gasPrice = null, BigInteger? gasLimit = null)
         {
             GasPrice = gasPrice;
             GasLimit = gasLimit;
         }
 
-        public TxParameters(int gasLimit)
+        public TxParameters(BigInteger? gasLimit)
         {
             GasLimit = gasLimit;
         }
