@@ -32,6 +32,11 @@ namespace ZeroX.Transactions
             };
         }
 
+        /// <summary>
+        /// Hashes a 0x transaction
+        /// </summary>
+        /// <param name="exchangeAddress">Address of exchange contract</param>
+        /// <returns>0x transaction hash</returns>
         public byte[] Hash(EthereumAddress exchangeAddress)
         {
             if (exchangeAddress == null)
@@ -42,6 +47,12 @@ namespace ZeroX.Transactions
             return hash;
         }
 
+        /// <summary>
+        /// Signs 0x transaction
+        /// </summary>
+        /// <param name="exchangeAddress">Address of exchange contract</param>
+        /// <param name="privateKey">Private key</param>
+        /// <returns>0x transaction signature</returns>
         public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
         {
             if (exchangeAddress == null)

@@ -2,7 +2,7 @@
 
 namespace ZeroX.Utilities
 {
-    internal static class Random
+    public static class Random
     {
 
         private static System.Random _random = new System.Random();

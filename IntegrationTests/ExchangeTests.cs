@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Nethereum.Web3;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,6 +6,7 @@ using ZeroX.Assets;
 using ZeroX.Contracts;
 using ZeroX.Orders;
 using ZeroX.Utilities;
+using Random = ZeroX.Utilities.Random;
 using Transaction = ZeroX.Transactions.Transaction;
 
 namespace IntegrationTests
@@ -71,7 +71,7 @@ namespace IntegrationTests
                 // Setting day to 22 causes one missing byte in signature
                 ExpirationTimeSeconds = (long)(new DateTime(2030, 1, 27, 0, 0, 0, DateTimeKind.Utc)
                 - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
-                Salt = new Random().Next()
+                Salt = Random.GenerateSalt()
             };
 
             byte[] makerSignature = order.Sign(exchangeAddress, MakerPrivateKey);
