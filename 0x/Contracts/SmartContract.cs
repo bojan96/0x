@@ -57,7 +57,8 @@ namespace ZeroX.Contracts
 
         protected static string LoadABI(string contractName)
         {
-            Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"ZeroX.ABI.{contractName}.json");
+            Stream stream = typeof(SmartContract).GetTypeInfo()
+                .Assembly.GetManifestResourceStream($"ZeroX.ABI.{contractName}.json");
             Debug.Assert(stream != null);
 
             using (stream)
