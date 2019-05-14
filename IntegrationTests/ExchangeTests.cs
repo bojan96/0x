@@ -68,17 +68,13 @@ namespace IntegrationTests
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                // Setting day to 22 causes one missing byte in signature
-                ExpirationTimeSeconds = (long)(new DateTime(2030, 1, 27, 0, 0, 0, DateTimeKind.Utc)
-                - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds,
+                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
                 Salt = Random.GenerateSalt()
             };
 
             byte[] makerSignature = order.Sign(exchangeAddress, MakerPrivateKey);
-            Debug.Assert(makerSignature.Length == 66);
             Transaction tx = ExchangeContract.FillOrderGet0xTx(order, order.TakerAssetAmount, makerSignature);
             byte[] takerSignature = tx.Sign(exchangeAddress, TakerPrivateKey);
-            Debug.Assert(takerSignature.Length == 66);
 
             string hash = await exchange.FillOrderAsync(
                 order,
