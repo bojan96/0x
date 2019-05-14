@@ -1,4 +1,5 @@
 ﻿using EIP712;
+using Nethereum.Util;
 using System;
 using System.Numerics;
 using ZeroX.Assets;
@@ -34,17 +35,28 @@ namespace ZeroX.Orders
             if (exchangeAddress == null)
                 throw new ArgumentNullException(nameof(exchangeAddress));
 
-            EIP712Domain domain = new EIP712Domain()
+            EIP712Domain domain = GetEIP712Domain(exchangeAddress);
+
+            return EIP712Service.Hash(EIP712Order, domain);
+        }
+
+        private EIP712Domain GetEIP712Domain(EthereumAddress exchangeAddress)
+            => new EIP712Domain
             {
                 Name = "0x Protocol",
                 Version = "2",
                 VerifyingContract = exchangeAddress.ToString()
             };
 
-            return EIP712.EIP712.Hash(EIP712Order, domain);
+        public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
+        {
+            EthereumSignature signature = EIP712Service.Sign(EIP712Order,
+                GetEIP712Domain(exchangeAddress), privateKey);
+
+            return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
 
-        private OrderInternal EIP712Order
+        internal OrderInternal EIP712Order
         {
             get => new OrderInternal
             {

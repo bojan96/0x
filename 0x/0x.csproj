@@ -1,14 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard1.1</TargetFramework>
     <RootNamespace>ZeroX</RootNamespace>
+    <Version>1.0.0-alpha1</Version>
+    <Authors>Bojan Malinić</Authors>
+    <Description>Library for interacting with 0x smart contracts</Description>
+    <RepositoryUrl>https://github.com/bojan96/0x</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EIP712" Version="0.0.1-alpha" />
-    <PackageReference Include="Nethereum.ABI" Version="3.2.0" />
-    <PackageReference Include="Nethereum.Util" Version="3.2.0" />
+    <None Remove="ABI\Exchange.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ABI\Exchange.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EIP712" Version="1.0.0-alpha1" />
+    <PackageReference Include="Nethereum.ABI" Version="3.3.0" />
+    <PackageReference Include="Nethereum.Util" Version="3.3.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.3.0" />
   </ItemGroup>
 
 </Project>

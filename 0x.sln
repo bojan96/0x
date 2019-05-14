@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "0x", "0x\0x.csproj", "{6B11AE24-B987-41E4-A224-5FD67C796BE0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "0x", "0x\0x.csproj", "{6B11AE24-B987-41E4-A224-5FD67C796BE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3EFE7A6E-131B-4B4C-83BD-B25EE1F68A11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{3EFE7A6E-131B-4B4C-83BD-B25EE1F68A11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{E504CA65-94C4-4675-ADFA-F02B83D305D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3EFE7A6E-131B-4B4C-83BD-B25EE1F68A11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EFE7A6E-131B-4B4C-83BD-B25EE1F68A11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EFE7A6E-131B-4B4C-83BD-B25EE1F68A11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E504CA65-94C4-4675-ADFA-F02B83D305D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E504CA65-94C4-4675-ADFA-F02B83D305D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E504CA65-94C4-4675-ADFA-F02B83D305D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E504CA65-94C4-4675-ADFA-F02B83D305D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

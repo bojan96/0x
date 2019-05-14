@@ -10,11 +10,15 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.3.2" />
     <PackageReference Include="MSTest.TestFramework" Version="1.3.2" />
-    <PackageReference Include="Nethereum.Util" Version="3.3.0" />
+    <PackageReference Include="Nethereum.Web3" Version="3.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\0x\0x.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Ganache\" />
   </ItemGroup>
 
 </Project>
