@@ -41,13 +41,13 @@ namespace ZeroX.Contracts
                 Data = callData.TxData.ToHex(true)
             };
 
-            tx.Gas = txParams == null || txParams.GasLimit < 0 ?
-                await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(tx) : new HexBigInteger(txParams.GasLimit);
+            tx.Gas = txParams == null || !txParams.GasLimit.HasValue ?
+                await _web3.Eth.Transactions.EstimateGas.SendRequestAsync(tx) : new HexBigInteger(txParams.GasLimit.Value);
             
-            tx.GasPrice = new HexBigInteger(txParams == null || txParams.GasPrice < 0 ?
-                Web3.Convert.ToWei(1, Nethereum.Util.UnitConversion.EthUnit.Gwei) : txParams.GasPrice);
+            tx.GasPrice = new HexBigInteger(txParams == null || !txParams.GasPrice.HasValue ?
+                Web3.Convert.ToWei(1, Nethereum.Util.UnitConversion.EthUnit.Gwei) : txParams.GasPrice.Value);
 
-            tx.Nonce = txParams == null || txParams.Nonce < 0 ? await GetNonce() : new HexBigInteger(txParams.Nonce);
+            tx.Nonce = txParams == null || !txParams.Nonce.HasValue ? await GetNonce() : new HexBigInteger(txParams.Nonce.Value);
 
             return await _web3.TransactionManager.SendTransactionAsync(tx);
         }
