@@ -4,6 +4,9 @@ using ZeroX.Utilities;
 
 namespace ZeroX.Assets
 {
+    /// <summary>
+    /// Token asset
+    /// </summary>
     public abstract class TokenAsset : Asset
     {
 
