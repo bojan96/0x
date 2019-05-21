@@ -19,6 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="docfx.console" Version="2.42.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="EIP712" Version="1.0.0-alpha1" />
     <PackageReference Include="Nethereum.ABI" Version="3.3.0" />
     <PackageReference Include="Nethereum.Util" Version="3.3.0" />
