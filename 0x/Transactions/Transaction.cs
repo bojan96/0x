@@ -11,7 +11,7 @@ namespace ZeroX.Transactions
     public class Transaction
     {
 
-        public BigInteger Salt { get; }
+        public BigInteger Salt { get; set; }
         public EthereumAddress SignerAddress { get; }
         public byte[] TxData { get; }
 
