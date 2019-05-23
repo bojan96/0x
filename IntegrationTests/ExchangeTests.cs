@@ -109,5 +109,59 @@ namespace IntegrationTests
 
             await exchange.FillOrderAsync(order, order.TakerAssetAmount, signature, new TxParameters(1000000));
         }
+
+        [TestMethod]
+        public async Task CancelOrderViaSender()
+        {
+
+            EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
+            ExchangeContract exchangeContract = new ExchangeContract(RpcURL, exchangeAddress, new Account(SenderPrivateKey));
+
+            Order order = new Order
+            {
+                MakerAddress = (EthereumAddress)MakerAddress,
+                TakerAddress = (EthereumAddress)TakerAddress,
+                SenderAddress = exchangeContract.CallerAccount.Address,
+                FeeRecipientAddress = (EthereumAddress)(Web3.GetAddressFromPrivateKey(SenderPrivateKey)),
+                MakerFee = 10,
+                TakerFee = 10,
+                MakerAssetAmount = 100,
+                TakerAssetAmount = 100,
+                MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
+                TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
+                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                Salt = Random.GenerateSalt()
+            };
+
+            Transaction tx = ExchangeContract.CancelOrderGet0xTx(order);
+            byte[] makerSignature = tx.Sign(exchangeAddress, MakerPrivateKey);
+
+            await exchangeContract.CancelOrderAsync(order, makerSignature, tx.Salt, new TxParameters(1000000));
+        }
+
+        [TestMethod]
+        public async Task CancelOrder()
+        {
+            EthereumAddress exchangeAddress = (EthereumAddress)ExchangeAddress;
+            ExchangeContract exchangeContract = new ExchangeContract(RpcURL, exchangeAddress, new Account(MakerPrivateKey));
+
+            Order order = new Order
+            {
+                MakerAddress = (EthereumAddress)MakerAddress,
+                TakerAddress = (EthereumAddress)TakerAddress,
+                SenderAddress = EthereumAddress.ZeroAddress,
+                FeeRecipientAddress = (EthereumAddress)(Web3.GetAddressFromPrivateKey(SenderPrivateKey)),
+                MakerFee = 10,
+                TakerFee = 10,
+                MakerAssetAmount = 100,
+                TakerAssetAmount = 100,
+                MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
+                TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
+                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                Salt = Random.GenerateSalt()
+            };
+
+            await exchangeContract.CancelOrderAsync(order, new TxParameters(1000000));
+        }
     }
 }

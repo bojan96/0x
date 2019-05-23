@@ -1,7 +1,6 @@
 ﻿
 using Nethereum.Contracts;
-using Nethereum.Hex.HexTypes;
-using Nethereum.RPC.Eth.DTOs;
+using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Web3;
 using System;
 using System.Collections.Generic;
@@ -11,13 +10,13 @@ using ZeroX.Enums;
 using ZeroX.Orders;
 using ZeroX.Utilities;
 using Transaction = ZeroX.Transactions.Transaction;
-using Nethereum.Hex.HexConvertors.Extensions;
 
 namespace ZeroX.Contracts
 {
     public class ExchangeContract : SmartContract
     {
         // TODO: Add argument validation, add docs
+        // TODO: Improve existing docs
         private const string ABIName = "Exchange";
 
         static ExchangeContract()
@@ -106,6 +105,53 @@ namespace ZeroX.Contracts
                     $"must be equal to caller account address", nameof(order));
 
             CallData callData = FillOrderCallData(order, takerAssetFillAmount, signature, ContractAddress, _web3);
+
+            return await SendTx(callData, txParams);
+        }
+
+        /// <summary>
+        /// Cancel order using this contract caller address as maker
+        /// </summary>
+        /// <param name="order">Order to cancel</param>
+        /// <returns>Task which resolves into tx hash</returns>
+        public async Task<string> CancelOrderAsync(Order order, TxParameters txParams = null)
+        {
+            order = order 
+                ?? throw new ArgumentNullException(nameof(order));
+
+
+            if (order.MakerAddress != CallerAccount.Address)
+                throw new ArgumentException($"{nameof(order)}.{nameof(Order.MakerAddress)} must " +
+                    $"be equal to caller account address", nameof(order));
+
+            if (order.SenderAddress != CallerAccount.Address && order.SenderAddress != EthereumAddress.ZeroAddress)
+                throw new ArgumentException($"{order}.{nameof(Order.SenderAddress)} must be equal to zerro address", nameof(order));
+
+            CallData callData = CancelOrderCallData(order, ContractAddress, _web3);
+
+            return await SendTx(callData, txParams);
+        }
+
+        /// <summary>
+        /// Cancel order using maker signature
+        /// </summary>
+        /// <param name="order">0x order</param>
+        /// <param name="makerSignature">Maker signature (i.e. signature of 0x <see cref="Transaction"/></param>
+        /// <param name="txSalt">0x <see cref="Transaction"/> salt</param>
+        /// <param name="txParams">Ethereum transaction parameters</param>
+        /// <returns>Task which resolves into tx hash</returns>
+        public async Task<string> CancelOrderAsync(Order order, byte[] makerSignature, BigInteger txSalt, TxParameters txParams = null)
+        {
+            order = order
+                ?? throw new ArgumentNullException(nameof(order));
+            makerSignature = makerSignature
+                ?? throw new ArgumentNullException(nameof(makerSignature));
+
+            if (order.SenderAddress != CallerAccount.Address)
+                throw new ArgumentException($"{nameof(order)}.{nameof(Order.SenderAddress)} must " +
+                    $"be equal to caller account address", nameof(order));
+
+            CallData callData = CancelOrderCallData(order, makerSignature, txSalt, ContractAddress, _web3);
 
             return await SendTx(callData, txParams);
         }
@@ -230,5 +276,86 @@ namespace ZeroX.Contracts
         /// <exception cref="ArgumentNullException">Thrown when any of the arguments is null</exception>
         public static CallData FillOrderCallData(Order order, BigInteger takerAssetAmount, byte[] signature, Network network, Web3 web3)
             => FillOrderCallData(order, takerAssetAmount, signature, _contractAddressses[network], web3);
+
+        /// <summary>
+        /// Constructs <see cref="CallData"/> object for cancelOrder call
+        /// </summary>
+        /// <param name="order">0x order</param>
+        /// <param name="exchangeAddress">Exchange contract address</param>
+        /// <param name="web3">Nethereum <see cref="Web3"/> object</param>
+        /// <returns><see cref="CallData"/> instance</returns>
+        public static CallData CancelOrderCallData(Order order, EthereumAddress exchangeAddress, Web3 web3)
+        {
+            order = order ?? throw new ArgumentNullException(nameof(order));
+            exchangeAddress = exchangeAddress ??
+                throw new ArgumentNullException(nameof(exchangeAddress));
+            web3 = web3 ?? throw new ArgumentNullException(nameof(web3));
+            Function cancelOrder = web3.Eth.GetContract(_abi, exchangeAddress).GetFunction("cancelOrder");
+            object[] parameters = new object[] { order.EIP712Order };
+
+            return new CallData(cancelOrder, parameters);
+        }
+
+
+        /// <summary>
+        /// Constructs <see cref="CallData"/> object for cancelOrder call
+        /// </summary>
+        /// <param name="order">0x order</param>
+        /// <param name="network">Ethereum network</param>
+        /// <param name="web3">Nethereum <see cref="Web3"/> object</param>
+        /// <returns><see cref="CallData"/> instance</returns>
+        public static CallData CancelOrderCallData(Order order, Network network, Web3 web3)
+            => CancelOrderCallData(order, _contractAddressses[network], web3);
+
+        /// <summary>
+        /// Get 0x <see cref="Transaction"/> for cancelOrder call
+        /// </summary>
+        /// <param name="order">0x order</param>
+        /// <returns>0x <see cref="Transaction"/></returns>
+        public static Transaction CancelOrderGet0xTx(Order order)
+        {
+            order = order 
+                ?? throw new ArgumentNullException(nameof(order));
+
+            string txData = GetTxData(_abi, "cancelOrder", new object[] { order.EIP712Order });
+            return new Transaction(order.MakerAddress, txData);
+        }
+
+
+        /// <summary>
+        /// Construct <see cref="CallData"/> for cancel order call
+        /// </summary>
+        /// <param name="order">0x order</param>
+        /// <param name="makerSignature">Maker signature (i.e. signature of 0x <see cref="Transaction"/></param>
+        /// <param name="txSalt">0x <see cref="Transaction"/> salt</param>
+        /// <param name="exchangeAddress">Exchange contract address</param>
+        /// <param name="web3">Nethereum <see cref="Web3"/> object</param>
+        /// <returns></returns>
+        public static CallData CancelOrderCallData(Order order, byte[] makerSignature, BigInteger txSalt, EthereumAddress exchangeAddress, Web3 web3)
+        {
+            order = order
+                ?? throw new ArgumentNullException(nameof(order));
+            makerSignature = makerSignature
+                ?? throw new ArgumentNullException(nameof(makerSignature));
+
+            Contract exchangeContract = web3.Eth.GetContract(_abi, exchangeAddress);
+            Function executeTxFunction = exchangeContract.GetFunction("executeTransaction");
+            string cancelOrderTxData = GetTxData(_abi, "cancelOrder",
+                new object[]
+                {
+                    order.EIP712Order,
+                });
+
+            object[] parameters = new object[]
+            {
+                txSalt,
+                order.MakerAddress.ToString(),
+                cancelOrderTxData.HexToByteArray(),
+                makerSignature
+            };
+
+            return new CallData(executeTxFunction, parameters);
+        }
+
     }
 }
