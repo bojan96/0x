@@ -10,6 +10,7 @@ namespace ZeroX.Orders
     public class Order
     {
         // TODO: Add docs, property validation
+        // TODO: Add proper exception handling
 
         public EthereumAddress MakerAddress { get; set; }
         public EthereumAddress TakerAddress { get; set; }
@@ -19,6 +20,7 @@ namespace ZeroX.Orders
         public BigInteger TakerAssetAmount { get; set; }
         public BigInteger MakerFee { get; set; }
         public BigInteger TakerFee { get; set; }
+        // TODO: Replace this with DateTime, calculate unix time internally
         public BigInteger ExpirationTimeSeconds { get; set; }
         public BigInteger Salt { get; set; }
         public Asset MakerAsset { get; set; }
@@ -56,6 +58,24 @@ namespace ZeroX.Orders
             return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
 
+        // Potentially async in the future due to fact some signature types require interaction with Ethereum network
+        public bool VerifySignature(EthereumAddress exchangeAddress, EthereumAddress signerAddress, byte[] signature)
+        {
+            if (signature[65] != Constants.EIP712SignatureType[0])
+                throw new ArgumentException("Only EIP712 signature types are supported", nameof(signature));
+
+            return EIP712Service.VerifySignature(EIP712Order, GetEIP712Domain(exchangeAddress), 
+                signerAddress, ReformatSignature(signature));
+        }
+        /// <summary>
+        /// Converst VRST signature into RSV 
+        /// T stands for signature type
+        /// </summary>
+        /// <param name="signature"></param>
+        /// <returns></returns>
+        private byte[] ReformatSignature(byte[] signature) 
+            => ByteUtil.Merge(signature.Slice(1, signature.Length - 1), signature.Slice(0, 1));
+        
         internal OrderInternal EIP712Order
         {
             get => new OrderInternal

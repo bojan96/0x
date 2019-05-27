@@ -10,11 +10,11 @@ namespace Tests.Tests
     {
 
         private static readonly EthereumAddress _testAddress = (EthereumAddress)Constants.TestEthereumAddress;
-        private static readonly byte[] _testERC20AssetData = ("0xf47261b0000000000000000000000000646934" +
-                "251e9045f41ddf7145dea5cd63cd45d8da").HexToByteArray();
-
-        private static readonly byte[] _testERC721AssetData = ("0x0257179200000000000000000000000064693425" +
-            "1e9045f41ddf7145dea5cd63cd45d8da00" +"00000000000000000000000000000000000000000000000000000000000001").HexToByteArray();
+        private static readonly byte[] _testERC20AssetData = ("0xf47261b0000000000000000000000" +
+            "0005409ed021d9299bf6814279a6a1411a7e866a631").HexToByteArray();
+        private static readonly byte[] _testERC721AssetData = ("0x0257179200000000000" +
+            "00000000000005409ed021d9299bf6814279a6a1411a7e866a6310000000000000000000" +
+            "000000000000000000000000000000000000000000001").HexToByteArray();
 
         [TestMethod]
         public void ERC20AssetDataEncoding()
