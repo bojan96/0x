@@ -56,6 +56,10 @@ namespace ZeroX.Orders
             return ByteUtil.Merge(signature.V, signature.R, signature.S, Constants.EIP712SignatureType);
         }
 
+        public bool VerifySignature(EthereumAddress exchangeAddress, EthereumAddress signerAddress, byte[] signature)
+            => EIP712Service.VerifySignature(EIP712Order, GetEIP712Domain(exchangeAddress), signerAddress, signature);
+        
+
         internal OrderInternal EIP712Order
         {
             get => new OrderInternal
