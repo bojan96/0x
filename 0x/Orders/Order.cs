@@ -20,6 +20,7 @@ namespace ZeroX.Orders
         public BigInteger TakerAssetAmount { get; set; }
         public BigInteger MakerFee { get; set; }
         public BigInteger TakerFee { get; set; }
+        // TODO: Replace this with DateTime, calculate unix time internally
         public BigInteger ExpirationTimeSeconds { get; set; }
         public BigInteger Salt { get; set; }
         public Asset MakerAsset { get; set; }
@@ -61,7 +62,7 @@ namespace ZeroX.Orders
         public bool VerifySignature(EthereumAddress exchangeAddress, EthereumAddress signerAddress, byte[] signature)
         {
             if (signature[65] != Constants.EIP712SignatureType[0])
-                throw new ArgumentException("Only EIP712 signature types are supported");
+                throw new ArgumentException("Only EIP712 signature types are supported", nameof(signature));
 
             return EIP712Service.VerifySignature(EIP712Order, GetEIP712Domain(exchangeAddress), 
                 signerAddress, ReformatSignature(signature));
