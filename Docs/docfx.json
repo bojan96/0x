@@ -4,8 +4,9 @@
       "src": [
         {
           "files": [
-            "../0x/**.csproj"
-          ]
+            "/**.cs"
+          ],
+          "src": "../0x"
         }
       ],
       "dest": "api",
