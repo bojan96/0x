@@ -62,7 +62,7 @@ namespace ZeroX.Orders
         public bool VerifySignature(EthereumAddress exchangeAddress, EthereumAddress signerAddress, byte[] signature)
         {
             if (signature[65] != Constants.EIP712SignatureType[0])
-                throw new ArgumentException("Only EIP712 signature types are supported", nameof(signature));
+                throw new NotImplementedException("Only EIP712 signature types are supported", nameof(signature));
 
             return EIP712Service.VerifySignature(EIP712Order, GetEIP712Domain(exchangeAddress), 
                 signerAddress, ReformatSignature(signature));
