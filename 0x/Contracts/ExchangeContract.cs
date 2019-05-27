@@ -48,7 +48,7 @@ namespace ZeroX.Contracts
         /// <summary>
         /// Constructs exchange contract instance
         /// </summary>
-        /// <param name="rpcUrl">Ethereum RPC UR</param>
+        /// <param name="rpcUrl">Ethereum RPC URL</param>
         /// <param name="network">Ethereum network</param>
         /// <param name="callerAccount">Account which performs calls on blockchain (i.e. msg.sender)</param>
         /// <exception cref="ArgumentNullException">Any of the arguments is equal to <c>null</c></exception>
