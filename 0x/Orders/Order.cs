@@ -55,7 +55,7 @@ namespace ZeroX.Orders
         /// </summary>
         /// <param name="exchangeAddress">Exchange contract address</param>
         /// <param name="privateKey">Private key</param>
-        /// <returns></returns>
+        /// <returns>Order signature (currently only EIP712 signature type is supported)</returns>
         public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
         {
             EthereumSignature signature = EIP712Service.Sign(EIP712Order,
