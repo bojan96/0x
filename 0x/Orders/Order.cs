@@ -29,9 +29,9 @@ namespace ZeroX.Orders
         /// <summary>
         /// Hashes given order
         /// </summary>
-        /// <param name="exchangeAddress">Address of Exchange contract</param>
+        /// <param name="exchangeAddress">Exchange contract address</param>
         /// <returns>Order signature</returns>
-        /// <exception cref="ArgumentNullException">exchangeAddress is null</exception>
+        /// <exception cref="ArgumentNullException">exchangeAddress is <c>null</c></exception>
         public byte[] Hash(EthereumAddress exchangeAddress)
         {
             if (exchangeAddress == null)
@@ -50,6 +50,12 @@ namespace ZeroX.Orders
                 VerifyingContract = exchangeAddress.ToString()
             };
 
+        /// <summary>
+        /// Signature signing 
+        /// </summary>
+        /// <param name="exchangeAddress">Exchange contract address</param>
+        /// <param name="privateKey">Private key</param>
+        /// <returns></returns>
         public byte[] Sign(EthereumAddress exchangeAddress, string privateKey)
         {
             EthereumSignature signature = EIP712Service.Sign(EIP712Order,
@@ -59,6 +65,13 @@ namespace ZeroX.Orders
         }
 
         // Potentially async in the future due to fact some signature types require interaction with Ethereum network
+        /// <summary>
+        /// Verifies order signature
+        /// </summary>
+        /// <param name="exchangeAddress">Exchange contract address</param>
+        /// <param name="signerAddress">Signer address</param>
+        /// <param name="signature">Signature</param>
+        /// <returns><c>true</c> if signature is valid, false otherwise</returns>
         public bool VerifySignature(EthereumAddress exchangeAddress, EthereumAddress signerAddress, byte[] signature)
         {
             if (signature[65] != Constants.EIP712SignatureType[0])
