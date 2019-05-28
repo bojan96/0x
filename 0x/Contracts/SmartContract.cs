@@ -14,7 +14,15 @@ namespace ZeroX.Contracts
     public abstract class SmartContract
     {
         protected readonly Web3 _web3;
+
+        /// <summary>
+        /// Smart contract address
+        /// </summary>
         public EthereumAddress ContractAddress { get; }
+
+        /// <summary>
+        /// Caller account
+        /// </summary>
         public Account CallerAccount { get; set; }
 
         protected SmartContract(string rpcUrl, EthereumAddress contractAddress, Account callerAccount)
