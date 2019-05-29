@@ -68,7 +68,7 @@ namespace IntegrationTests
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                ExpirationTime = DateTime.UtcNow + new TimeSpan(1, 0, 0),
                 Salt = Random.GenerateSalt()
             };
 
@@ -102,7 +102,7 @@ namespace IntegrationTests
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                ExpirationTime = DateTime.UtcNow + new TimeSpan(1, 0, 0),
                 Salt = Random.GenerateSalt()
             };
             byte[] signature = order.Sign(exchangeAddress, MakerPrivateKey);
@@ -129,7 +129,7 @@ namespace IntegrationTests
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                ExpirationTime = DateTime.UtcNow + new TimeSpan(1, 0, 0),
                 Salt = Random.GenerateSalt()
             };
 
@@ -157,7 +157,7 @@ namespace IntegrationTests
                 TakerAssetAmount = 100,
                 MakerAsset = ERC20Asset.Create((EthereumAddress)MakerTokenAddress),
                 TakerAsset = ERC20Asset.Create((EthereumAddress)TakerTokenAddress),
-                ExpirationTimeSeconds = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).GetUnixTime(),
+                ExpirationTime = DateTime.UtcNow + new TimeSpan(1, 0, 0),
                 Salt = Random.GenerateSalt()
             };
 

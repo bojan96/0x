@@ -3,6 +3,7 @@ using Nethereum.Hex.HexConvertors.Extensions;
 using ZeroX.Assets;
 using ZeroX.Orders;
 using ZeroX.Utilities;
+using System;
 
 namespace Tests.Tests
 {
@@ -23,7 +24,7 @@ namespace Tests.Tests
                 MakerFee = 1,
                 TakerFee = 1,
                 Salt = 1,
-                ExpirationTimeSeconds = 1,
+                ExpirationTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc),
                 MakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress),
                 TakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress)
             };
@@ -51,7 +52,7 @@ namespace Tests.Tests
                 MakerFee = 1,
                 TakerFee = 1,
                 Salt = 1,
-                ExpirationTimeSeconds = 1,
+                ExpirationTime = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc),
                 MakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress),
                 TakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress)
             };
