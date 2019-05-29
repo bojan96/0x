@@ -23,12 +23,21 @@ namespace ZeroX.Utilities
             Nonce = nonce;
         }
 
+        /// <summary>
+        /// Constructs instance of TxParameters class
+        /// </summary>
+        /// <param name="gasPrice">Gas price of transaction, set to null to use contract default values</param>
+        /// <param name="gasLimit">Gas limit of transaction, set to null to use gas estimation</param>
         public TxParameters(BigInteger? gasPrice = null, BigInteger? gasLimit = null)
         {
             GasPrice = gasPrice;
             GasLimit = gasLimit;
         }
 
+        /// <summary>
+        /// Constructs instance of TxParameters class
+        /// </summary>
+        /// <param name="gasLimit">Gas limit of transaction, set to null to use gas estimation</param>
         public TxParameters(BigInteger? gasLimit)
         {
             GasLimit = gasLimit;
@@ -38,6 +47,9 @@ namespace ZeroX.Utilities
         private BigInteger? _gasLimit = null;
         private BigInteger? _nonce = null;
 
+        /// <summary>
+        /// Transaction gas price
+        /// </summary>
         public BigInteger? GasPrice
         {
             get => _gasPrice;
@@ -49,8 +61,11 @@ namespace ZeroX.Utilities
                 else
                     _gasPrice = null;
             }
-        } 
+        }
 
+        /// <summary>
+        /// Transaction gas limit
+        /// </summary>
         public BigInteger? GasLimit
         {
             get => _gasLimit;
@@ -64,6 +79,10 @@ namespace ZeroX.Utilities
             }
         }
 
+
+        /// <summary>
+        /// Transaction nonce
+        /// </summary>
         public BigInteger? Nonce
         {
             get => _nonce;
