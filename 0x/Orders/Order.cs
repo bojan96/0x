@@ -20,8 +20,7 @@ namespace ZeroX.Orders
         public BigInteger TakerAssetAmount { get; set; }
         public BigInteger MakerFee { get; set; }
         public BigInteger TakerFee { get; set; }
-        // TODO: Replace this with DateTime, calculate unix time internally
-        public BigInteger ExpirationTimeSeconds { get; set; }
+        public DateTime ExpirationTime { get; set; }
         public BigInteger Salt { get; set; }
         public Asset MakerAsset { get; set; }
         public Asset TakerAsset { get; set; }
@@ -101,7 +100,7 @@ namespace ZeroX.Orders
                 TakerAssetAmount = TakerAssetAmount,
                 MakerFee = MakerFee,
                 TakerFee = TakerFee,
-                ExpirationTimeSeconds = ExpirationTimeSeconds,
+                ExpirationTimeSeconds = ExpirationTime.GetUnixTime(),
                 Salt = Salt,
                 MakerAssetData = MakerAsset.AssetData,
                 TakerAssetData = TakerAsset.AssetData
