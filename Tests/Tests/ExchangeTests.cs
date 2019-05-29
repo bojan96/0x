@@ -29,7 +29,7 @@ namespace Tests.Tests
                 TakerAssetAmount = 0,
                 MakerFee = 0,
                 TakerFee = 0,
-                ExpirationTimeSeconds = 0,
+                ExpirationTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 Salt = 0,
                 MakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress),
                 TakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress)
