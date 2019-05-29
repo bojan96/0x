@@ -10,7 +10,7 @@ namespace Tests.Tests
     public class OrderTests
     {
         [TestMethod]
-        public void TestOrderHash()
+        public void Hash()
         {
             Order order = new Order
             {
@@ -34,6 +34,34 @@ namespace Tests.Tests
                 .HexToByteArray();
 
             CollectionAssert.AreEqual(expectedHash, hash);
+        }
+
+        [TestMethod]
+        public void VerifySignature()
+        {
+
+            Order order = new Order
+            {
+                MakerAddress = EthereumAddress.ZeroAddress,
+                TakerAddress = EthereumAddress.ZeroAddress,
+                FeeRecipientAddress = EthereumAddress.ZeroAddress,
+                SenderAddress = EthereumAddress.ZeroAddress,
+                MakerAssetAmount = 1,
+                TakerAssetAmount = 1,
+                MakerFee = 1,
+                TakerFee = 1,
+                Salt = 1,
+                ExpirationTimeSeconds = 1,
+                MakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress),
+                TakerAsset = ERC20Asset.Create(EthereumAddress.ZeroAddress)
+            };
+
+            byte[] signature = order.Sign(EthereumAddress.ZeroAddress, Constants.TestPrivateKey);
+            bool valid = order.VerifySignature(EthereumAddress.ZeroAddress, 
+                (EthereumAddress)Constants.TestEthereumAddress, signature);
+
+            Assert.IsTrue(valid);
+
         }
 
 
