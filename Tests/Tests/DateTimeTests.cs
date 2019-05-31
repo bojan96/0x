@@ -13,7 +13,7 @@ namespace Tests.Tests
         public void DateTimeUnixConversion()
         {
             DateTime expectedDt = DateTime.UtcNow;
-            var dt = expectedDt.GetUnixTime().GetDate();
+            var dt = expectedDt.GetUnixTime().GetUtcDate();
             Assert.AreEqual(expectedDt.Date, dt.Date);
             Assert.AreEqual(expectedDt.Second, dt.Second);
             Assert.AreEqual(expectedDt.Minute, dt.Minute);
