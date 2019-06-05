@@ -17,6 +17,7 @@ namespace ZeroX.Assets
     {
 
         private static readonly byte[] _erc721AssetHeader = new byte[] { 0x02, 0x57, 0x17, 0x92 };
+        private const int AssetDataLength = 68;
 
         private static byte[] EncodeAssetData(EthereumAddress tokenAddress, BigInteger tokenId)
             => ByteUtil.Merge(_erc721AssetHeader, 
@@ -72,5 +73,9 @@ namespace ZeroX.Assets
         private static bool ValidateTokenId(BigInteger tokenId)
             => tokenId <= IntType.MAX_UINT256_VALUE && tokenId >= 0;
 
+        public static bool ValidateAssetData(byte[] assetData)
+            => assetData.Length == 68 
+            && assetData.Slice(0, 4).SequenceEqual(_erc721AssetHeader)
+            && ValidateTokenId(new BigInteger(assetData.Slice(36)));
     }
 }

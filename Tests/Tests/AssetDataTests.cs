@@ -43,8 +43,22 @@ namespace Tests.Tests
         {
             ERC721Asset asset = ERC721Asset.Create(_testERC721AssetData);
             Assert.AreEqual(1, asset.TokenId);
-            Assert.AreEqual((EthereumAddress)(Constants.TestEthereumAddress), asset.TokenAddress);
+            Assert.AreEqual(_testAddress, asset.TokenAddress);
         }
 
+        [TestMethod]
+        public void AssetUtilCreateERC20AssetData()
+        {
+            ERC20Asset asset = AssetUtil.Create<ERC20Asset>(_testERC20AssetData);
+            Assert.AreEqual(_testAddress, asset.TokenAddress);
+        }
+
+        [TestMethod]
+        public void AssetUtilCreateERC721AssetData()
+        {
+            ERC721Asset asset = AssetUtil.Create<ERC721Asset>(_testERC721AssetData);
+            Assert.AreEqual(_testAddress, asset.TokenAddress);
+            Assert.AreEqual(1, asset.TokenId);
+        }
     }
 }

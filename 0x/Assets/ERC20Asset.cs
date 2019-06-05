@@ -13,6 +13,7 @@ namespace ZeroX.Assets
     {
 
         private static readonly byte[] _erc20AssetHeader = new byte[] { 0xf4, 0x72, 0x61, 0xb0 };
+        private const int AssetDataLength = 36;
 
         private static byte[] EncodeAssetData(EthereumAddress tokenAddress)
             => ByteUtil.Merge(_erc20AssetHeader, EncodeAddress(tokenAddress));
@@ -44,10 +45,13 @@ namespace ZeroX.Assets
             if (assetData == null)
                 throw new ArgumentNullException(nameof(assetData));
 
-            if (assetData.Length != 36 || ! assetData.Slice(0, 4).SequenceEqual(_erc20AssetHeader))
+            if (!ValidateAssetData(assetData))
                 throw new ArgumentException("Asset data not valid", nameof(assetData));
 
             return new ERC20Asset(assetData);
         }
+
+        public static bool ValidateAssetData(byte[] assetData)
+            => assetData.Length == AssetDataLength && assetData.Slice(0, 4).SequenceEqual(_erc20AssetHeader);
     }
 }
