@@ -12,8 +12,12 @@ namespace ZeroX.Assets
         /// <param name="assetData">Asset data</param>
         /// <returns>New instance</returns>
         /// <exception cref="InvalidCastException">Unable to cast to specified asset data</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="assetData"/> is <c>null</c></exception>
         public static T Create<T>(byte[] assetData) where T : Asset
         {
+            if (assetData == null)
+                throw new ArgumentNullException(nameof(assetData));
+
             Asset asset;
 
             if (ERC20Asset.ValidateAssetData(assetData))
